@@ -23,10 +23,25 @@ repositories {
 
 
 dependencies {
+    // spring
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
+
+    // db
 	runtime('org.hsqldb:hsqldb')
+
+    // axon
+    compile group: 'org.axonframework', name: 'axon-spring', version: '3.0.3'
+
+    // utils
+    compile group: 'com.google.guava', name: 'guava', version: '21.0'
+	compile group: 'org.javatuples', name: 'javatuples', version: '1.2'
 	compileOnly('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    // tests
+    testCompile group: 'org.axonframework', name: 'axon-test', version: '3.0.3'
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.2'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.2'
 }
