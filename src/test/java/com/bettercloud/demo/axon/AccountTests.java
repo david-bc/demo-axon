@@ -1,6 +1,8 @@
 package com.bettercloud.demo.axon;
 
+import com.bettercloud.demo.axon.models.commands.DepositMoneyCommand;
 import com.bettercloud.demo.axon.models.commands.WithdrawMoneyCommand;
+import com.bettercloud.demo.axon.models.events.MoneyDepositedEvent;
 import com.bettercloud.demo.axon.models.events.MoneyWithdrawnEvent;
 import com.bettercloud.demo.axon.services.aggragates.Account;
 import com.bettercloud.demo.axon.models.commands.CreateAccountCommand;
@@ -52,5 +54,40 @@ public class AccountTests {
                 .when(new WithdrawMoneyCommand("1234", 2))
                 .expectNoEvents()
                 .expectException(OverdraftLimitExceededException.class);
+    }
+
+    @Test
+    public void testDeposit() throws Exception {
+        fixture.given(new AccountCreatedEvent("1234", 1000))
+                .when(new DepositMoneyCommand("1234", 100))
+                .expectEvents(new MoneyDepositedEvent("1234", 100, 100));
+    }
+
+    @Test
+    public void testDepositAfterWithdraw() throws Exception {
+        fixture.given(new AccountCreatedEvent("1234", 1000),
+                    new MoneyWithdrawnEvent("1234", 50, -50)
+                )
+                .when(new DepositMoneyCommand("1234", 100))
+                .expectEvents(new MoneyDepositedEvent("1234", 100, 50));
+    }
+
+    @Test
+    public void testLargeWithdrawAfterDeposit() throws Exception {
+        fixture.given(new AccountCreatedEvent("1234", 1000),
+                    new MoneyDepositedEvent("1234", 1000, 1000)
+                )
+                .when(new WithdrawMoneyCommand("1234", 1999))
+                .expectEvents(new MoneyWithdrawnEvent("1234", 1999, -999));
+    }
+
+    @Test
+    public void testOverdrawAfterDeposit() throws Exception {
+        fixture.given(new AccountCreatedEvent("1234", 1000),
+                    new MoneyDepositedEvent("1234", 1000, 1000)
+                )
+                .when(new WithdrawMoneyCommand("1234", 2001))
+                .expectNoEvents()
+                .expectException(OverdraftLimitExceededException.class);;
     }
 }

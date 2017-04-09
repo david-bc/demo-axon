@@ -1,8 +1,10 @@
 package com.bettercloud.demo.axon.services.aggragates;
 
 import com.bettercloud.demo.axon.models.commands.CreateAccountCommand;
+import com.bettercloud.demo.axon.models.commands.DepositMoneyCommand;
 import com.bettercloud.demo.axon.models.commands.WithdrawMoneyCommand;
 import com.bettercloud.demo.axon.models.events.AccountCreatedEvent;
+import com.bettercloud.demo.axon.models.events.MoneyDepositedEvent;
 import com.bettercloud.demo.axon.models.events.MoneyWithdrawnEvent;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
@@ -46,6 +48,11 @@ public class Account {
         }
     }
 
+    @CommandHandler
+    public void handle(DepositMoneyCommand cmd) {
+        apply(new MoneyDepositedEvent(this.accountId, cmd.getAmount(), balance + cmd.getAmount()));
+    }
+
     @EventSourcingHandler
     public void on(AccountCreatedEvent e) {
         this.accountId = e.getAccountId();
@@ -54,6 +61,11 @@ public class Account {
 
     @EventSourcingHandler
     public void on(MoneyWithdrawnEvent e) {
+        this.balance = e.getBalance();
+    }
+
+    @EventSourcingHandler
+    public void on(MoneyDepositedEvent e) {
         this.balance = e.getBalance();
     }
 }
