@@ -23,3 +23,11 @@ Introduction to Axon and basics of:
 
 https://www.youtube.com/watch?v=s2zH7BsqtAk
 
+## Video 2
+
+Axon Sagas
+
+- Sagas to mange transactions
+- Binding events to existing sagas
+
+https://www.youtube.com/watch?v=Fj365BufWNU
