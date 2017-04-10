@@ -1,6 +1,7 @@
 package com.bettercloud.demo.axon;
 
 import com.bettercloud.demo.axon.models.commands.CreateAccountCommand;
+import com.bettercloud.demo.axon.models.commands.RequestMoneyTransferCommand;
 import com.bettercloud.demo.axon.models.commands.WithdrawMoneyCommand;
 import com.bettercloud.demo.axon.services.aggragates.Account;
 import org.axonframework.commandhandling.AsynchronousCommandBus;
@@ -17,35 +18,24 @@ import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
 import org.axonframework.eventsourcing.eventstore.inmemory.InMemoryEventStorageEngine;
 import org.axonframework.spring.config.EnableAxon;
 import org.axonframework.spring.messaging.unitofwork.SpringTransactionManager;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.axonframework.commandhandling.GenericCommandMessage.asCommandMessage;
 
+@EntityScan
 @EnableAxon
 @SpringBootApplication
 public class Application {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext config = SpringApplication.run(Application.class, args);
-
-		CommandBus commandBus = config.getBean(CommandBus.class);
-
-		commandBus.dispatch(asCommandMessage(new CreateAccountCommand("1234", 1000)), new CommandCallback<Object, Object>() {
-			@Override
-			public void onSuccess(CommandMessage<?> commandMessage, Object result) {
-				commandBus.dispatch(asCommandMessage(new WithdrawMoneyCommand("1234", "tf1", 500)));
-				commandBus.dispatch(asCommandMessage(new WithdrawMoneyCommand("1234", "tf1", 501)));
-			}
-
-			@Override
-			public void onFailure(CommandMessage<?> commandMessage, Throwable cause) {
-
-			}
-		});
+		SpringApplication.run(Application.class, args);
 	}
 
 	@Bean
@@ -68,8 +58,14 @@ public class Application {
 		return new SpringTransactionManager(tx);
 	}
 
-//	@Bean
-//	public CommandBus commandBus() {
-//		return new AsynchronousCommandBus();
-//	}
+	@Bean
+	public CommandLineRunner initRunner(CommandBus commandBus) {
+		return args -> {
+			commandBus.dispatch(asCommandMessage(new CreateAccountCommand("1", 1000)));
+			commandBus.dispatch(asCommandMessage(new CreateAccountCommand("2", 2000)));
+			commandBus.dispatch(asCommandMessage(new CreateAccountCommand("3", 3000)));
+//			commandBus.dispatch(asCommandMessage(new RequestMoneyTransferCommand("tf1", "1", "2", 100)));
+//			commandBus.dispatch(asCommandMessage(new RequestMoneyTransferCommand("tf1", "2", "3", 1000)));
+		};
+	}
 }

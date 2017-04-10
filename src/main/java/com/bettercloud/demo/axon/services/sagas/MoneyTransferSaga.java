@@ -9,6 +9,7 @@ import com.bettercloud.demo.axon.models.events.MoneyTransferCanceledEvent;
 import com.bettercloud.demo.axon.models.events.MoneyTransferCompletedEvent;
 import com.bettercloud.demo.axon.models.events.MoneyTransferRequestedEvent;
 import com.bettercloud.demo.axon.models.events.MoneyWithdrawnEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandCallback;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by davidesposito on 4/10/17.
  */
 @Saga
+@Slf4j
 public class MoneyTransferSaga {
 
     @Autowired
@@ -32,6 +34,7 @@ public class MoneyTransferSaga {
     @StartSaga
     @SagaEventHandler(associationProperty = "transferId")
     public void on(MoneyTransferRequestedEvent e) {
+        log.info(e.toString());
         this.targetAccountId = e.getTargetAccountId();
         commandGateway.send(new WithdrawMoneyCommand(e.getSourceAccountId(), e.getTransferId(), e.getAmount()), new CommandCallback<WithdrawMoneyCommand, Object>() {
             @Override
@@ -48,19 +51,25 @@ public class MoneyTransferSaga {
 
     @SagaEventHandler(associationProperty = "transactionId", keyName = "transferId")
     public void on(MoneyWithdrawnEvent e) {
+        log.info(e.toString());
         commandGateway.send(new DepositMoneyCommand(this.targetAccountId, e.getTransactionId(), e.getAmount()));
     }
 
     @SagaEventHandler(associationProperty = "transactionId", keyName = "transferId")
     public void on(MoneyDepositedEvent e) {
+        log.info(e.toString());
         commandGateway.send(new CompleteMoneyTransferCommand(e.getTransactionId()));
     }
 
     @EndSaga
     @SagaEventHandler(associationProperty = "transferId")
-    public void on(MoneyTransferCompletedEvent e) { }
+    public void on(MoneyTransferCompletedEvent e) {
+        log.info(e.toString());
+    }
 
     @EndSaga
     @SagaEventHandler(associationProperty = "transferId")
-    public void on(MoneyTransferCanceledEvent e) { }
+    public void on(MoneyTransferCanceledEvent e) {
+        log.info(e.toString());
+    }
 }

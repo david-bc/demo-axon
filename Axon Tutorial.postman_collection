@@ -1,0 +1,71 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Axon Tutorial",
+		"_postman_id": "5a996718-479d-9876-620d-40e432697064",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Balances",
+			"request": {
+				"url": "http://localhost:8080/balances",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Balance By Id",
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/balances/:id",
+					"protocol": "http",
+					"auth": {},
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"balances",
+						":id"
+					],
+					"variable": [
+						{
+							"value": "1",
+							"id": "id"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer",
+			"request": {
+				"url": "http://localhost:8080/balances/transfer",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"source\": \"1\",\n\t\"target\": \"2\",\n\t\"amount\": 100\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

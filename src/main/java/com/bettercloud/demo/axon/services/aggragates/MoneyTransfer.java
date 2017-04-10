@@ -13,6 +13,7 @@ import com.bettercloud.demo.axon.models.events.MoneyTransferCompletedEvent;
 import com.bettercloud.demo.axon.models.events.MoneyTransferRequestedEvent;
 import com.bettercloud.demo.axon.models.events.MoneyWithdrawnEvent;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -28,25 +29,31 @@ import static org.axonframework.commandhandling.model.AggregateLifecycle.markDel
 /**
  * Created by davidesposito on 4/9/17.
  */
-@NoArgsConstructor
+@Slf4j
 @Entity
+@Aggregate
+@NoArgsConstructor
 public class MoneyTransfer {
 
+    @Id
     @AggregateIdentifier
     private String transferId;
 
     @CommandHandler
     public MoneyTransfer(RequestMoneyTransferCommand cmd) {
-         apply(new MoneyTransferRequestedEvent(cmd.getTransferId(), cmd.getSourceAccountId(), cmd.getTargetAccountId(), cmd.getAmount()));
+        log.info(cmd.toString());
+        apply(new MoneyTransferRequestedEvent(cmd.getTransferId(), cmd.getSourceAccountId(), cmd.getTargetAccountId(), cmd.getAmount()));
     }
 
     @CommandHandler
     public void handle(CompleteMoneyTransferCommand cmd) throws OverdraftLimitExceededException {
+        log.info(cmd.toString());
         apply(new MoneyTransferCompletedEvent(this.transferId));
     }
 
     @CommandHandler
     public void handle(CancelMoneyTransferCommand cmd) {
+        log.info(cmd.toString());
         apply(new MoneyTransferCanceledEvent(this.transferId));
     }
 
