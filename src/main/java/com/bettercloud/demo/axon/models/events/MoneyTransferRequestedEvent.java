@@ -9,10 +9,10 @@ import lombok.NonNull;
  */
 @Data
 @AllArgsConstructor
-public class MoneyDepositedEvent {
+public class MoneyTransferRequestedEvent {
 
-    @NonNull private String accountId;
-    private String transactionId;
+    @NonNull private String transferId;
+    @NonNull private String sourceAccountId;
+    @NonNull private String targetAccountId;
     private int amount;
-    private int balance;
 }

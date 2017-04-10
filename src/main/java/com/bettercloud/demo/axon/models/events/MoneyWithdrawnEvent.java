@@ -12,6 +12,7 @@ import lombok.NonNull;
 public class MoneyWithdrawnEvent  {
 
     @NonNull private String accountId;
+    private String transactionId;
     private int amount;
     private int balance;
 }

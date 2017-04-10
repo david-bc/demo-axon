@@ -10,11 +10,9 @@ import org.axonframework.commandhandling.TargetAggregateIdentifier;
  */
 @Data
 @AllArgsConstructor
-public class DepositMoneyCommand {
+public class CompleteMoneyTransferCommand {
 
     @NonNull
     @TargetAggregateIdentifier
-    private String accountId;
-    private String transactionId;
-    private int amount;
+    private String transferId;
 }

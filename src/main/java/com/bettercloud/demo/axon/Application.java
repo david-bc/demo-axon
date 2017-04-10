@@ -37,8 +37,8 @@ public class Application {
 		commandBus.dispatch(asCommandMessage(new CreateAccountCommand("1234", 1000)), new CommandCallback<Object, Object>() {
 			@Override
 			public void onSuccess(CommandMessage<?> commandMessage, Object result) {
-				commandBus.dispatch(asCommandMessage(new WithdrawMoneyCommand("1234", 500)));
-				commandBus.dispatch(asCommandMessage(new WithdrawMoneyCommand("1234", 501)));
+				commandBus.dispatch(asCommandMessage(new WithdrawMoneyCommand("1234", "tf1", 500)));
+				commandBus.dispatch(asCommandMessage(new WithdrawMoneyCommand("1234", "tf1", 501)));
 			}
 
 			@Override

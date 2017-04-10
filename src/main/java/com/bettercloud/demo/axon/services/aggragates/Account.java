@@ -42,7 +42,7 @@ public class Account {
     @CommandHandler
     public void handle(WithdrawMoneyCommand cmd) throws OverdraftLimitExceededException {
         if (this.balance + this.overdraftLimit >= cmd.getAmount()) {
-            apply(new MoneyWithdrawnEvent(this.accountId, cmd.getAmount(), balance - cmd.getAmount()));
+            apply(new MoneyWithdrawnEvent(this.accountId, cmd.getTransactionId(), cmd.getAmount(), balance - cmd.getAmount()));
         } else {
             throw new OverdraftLimitExceededException();
         }
@@ -50,7 +50,7 @@ public class Account {
 
     @CommandHandler
     public void handle(DepositMoneyCommand cmd) {
-        apply(new MoneyDepositedEvent(this.accountId, cmd.getAmount(), balance + cmd.getAmount()));
+        apply(new MoneyDepositedEvent(this.accountId, cmd.getTransactionId(), cmd.getAmount(), balance + cmd.getAmount()));
     }
 
     @EventSourcingHandler
